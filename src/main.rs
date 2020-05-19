@@ -11,8 +11,6 @@ use glium::Surface;
 //TODO FFT-Bibliotheken benutzen
 
 
-
-
 fn main() {
     println!("Hello, world!");
 
