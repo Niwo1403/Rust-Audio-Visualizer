@@ -3,6 +3,16 @@ extern crate glium;
 
 use glium::Surface;
 
+
+//TODO Fileselector
+//TODO UI - Knopf
+//TODO Malen
+//TODO Audiodatein lesen
+//TODO FFT-Bibliotheken benutzen
+
+
+
+
 fn main() {
     println!("Hello, world!");
 
