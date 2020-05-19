@@ -41,13 +41,14 @@ version = "0.3.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f0e60b75072ecd4168020818c0107f2857bb6c4e64252d8d3983f6263b40a5c3"
 dependencies = [
- "num-traits",
+ "num-traits 0.2.11",
 ]
 
 [[package]]
 name = "audio_visualizer"
 version = "0.1.0"
 dependencies = [
+ "dft",
  "glium",
 ]
 
@@ -237,6 +238,16 @@ dependencies = [
  "proc-macro2 1.0.13",
  "quote 1.0.6",
  "syn",
+]
+
+[[package]]
+name = "dft"
+version = "0.5.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "86c83c6ce4ad5d596757571b99ae40694bbfd85453a9ca4862b13cc4cc290407"
+dependencies = [
+ "num-complex",
+ "num-traits 0.1.43",
 ]
 
 [[package]]
@@ -484,7 +495,7 @@ version = "0.7.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5cc7ad3d82c845bdb5dde34ffdcc7a5fb4d2996e1e1ee0f19c33bc80e15196b9"
 dependencies = [
- "num-traits",
+ "num-traits 0.2.11",
 ]
 
 [[package]]
@@ -638,6 +649,24 @@ dependencies = [
 ]
 
 [[package]]
+name = "num-complex"
+version = "0.1.43"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b288631d7878aaf59442cffd36910ea604ecd7745c36054328595114001c9656"
+dependencies = [
+ "num-traits 0.2.11",
+]
+
+[[package]]
+name = "num-traits"
+version = "0.1.43"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "92e5113e9fd4cc14ded8e499429f396a20f98c772a47cc8622a736e1ec843c31"
+dependencies = [
+ "num-traits 0.2.11",
+]
+
+[[package]]
 name = "num-traits"
 version = "0.2.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -689,7 +718,7 @@ version = "1.0.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "18869315e81473c951eb56ad5558bbc56978562d3ecfb87abb7a1e944cea4518"
 dependencies = [
- "num-traits",
+ "num-traits 0.2.11",
 ]
 
 [[package]]
