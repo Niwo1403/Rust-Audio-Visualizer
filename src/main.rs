@@ -20,7 +20,7 @@ fn main() {
         //----------------draw something--------------------------
 
         let mut target = display.draw();
-        target.clear_color(1.0, 1.0, 1.0, 1.0);
+        target.clear_color(1.0, 0.7, 0.4, 1.0);
         target.finish().unwrap();
 
         //---------------end drawing------------------------------
