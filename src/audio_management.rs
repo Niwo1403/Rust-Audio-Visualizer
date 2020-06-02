@@ -19,13 +19,10 @@ use rodio::Source;
 //To control the playback, rodio provides a type named Sink which represents an audio track.
 use rodio::Sink;
 
-
 let device = rodio::default_output_device().unwrap();
 
 let file = File::open("sound.ogg").unwrap();
 let source = rodio::Decoder::new(BufReader::new(file)).unwrap();
-
-
 
 
 let device = rodio::default_output_device().unwrap();
