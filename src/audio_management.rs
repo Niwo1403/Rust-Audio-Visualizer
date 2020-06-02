@@ -2,7 +2,7 @@
 //to represent a sound in memory we need three characteristics: the frequency, the number of channels,
 // and the list of samples
 
-//A Rust object that represents a sound should implement the Source trait.
+// Rust object that represents a sound should implement the Source trait.
 // The three characteristics that describe a sound are provided through this trait:
 //
 // The number of channels can be retrieved with channels.
@@ -29,7 +29,7 @@ let source = rodio::Decoder::new(BufReader::new(file)).unwrap();
 let device = rodio::default_output_device().unwrap();
 let sink = Sink::new(&device);
 
-// Add a dummy source of the sake of the example.
+// Add a dummy source for the sake of the example.
 let source = rodio::source::SineWave::new(440);
 //append will add the sound at the end of the sink. It will be played when all the previous sounds have been played.
 sink.append(source);
