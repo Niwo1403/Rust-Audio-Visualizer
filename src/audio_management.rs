@@ -3,7 +3,6 @@
 // and the list of samples
 
 //A Rust object that represents a sound should implement the Source trait.
-//
 // The three characteristics that describe a sound are provided through this trait:
 //
 // The number of channels can be retrieved with channels.
@@ -23,3 +22,14 @@ let device = rodio::default_output_device().unwrap();
 let file = File::open("sound.ogg").unwrap();
 let source = rodio::Decoder::new(BufReader::new(file)).unwrap();
 rodio::play_raw(&device, source.convert_samples());
+
+
+//To control the playback, rodio provides a type named Sink which represents an audio track.
+use rodio::Sink;
+
+let device = rodio::default_output_device().unwrap();
+let sink = Sink::new(&device);
+
+// Add a dummy source of the sake of the example.
+let source = rodio::source::SineWave::new(440);
+sink.append(source);
