@@ -12,6 +12,7 @@
 // Create an object that represents the streaming sound. It can be a sine wave, a buffer, a decoder, etc. or even your own type that implements the Source trait.
 // Choose an output with the devices or default_output_device functions.
 // Call play_raw(output, source).
+//Source: https://docs.rs/rodio/0.11.0/rodio/
 
 use std::fs::File;
 use std::io::BufReader;
@@ -32,3 +33,9 @@ let sink = Sink::new(&device);
 let source = rodio::source::SineWave::new(440);
 //append will add the sound at the end of the sink. It will be played when all the previous sounds have been played.
 sink.append(source);
+
+//Required methods:
+fn current_frame_len(&self) -> Option<usize> //Returns the number of samples before the current frame ends
+fn channels(&self) -> u16 //Returns the number of channels
+fn sample_rate(&self) -> u32 //Returns the rate at which the source should be played in number of samples per second
+fn total_duration(&self) -> Option<Duration> //Returns the total duration of this source, if known
