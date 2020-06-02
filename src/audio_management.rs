@@ -16,20 +16,22 @@
 use std::fs::File;
 use std::io::BufReader;
 use rodio::Source;
+//To control the playback, rodio provides a type named Sink which represents an audio track.
+use rodio::Sink;
+
 
 let device = rodio::default_output_device().unwrap();
 
 let file = File::open("sound.ogg").unwrap();
 let source = rodio::Decoder::new(BufReader::new(file)).unwrap();
-rodio::play_raw(&device, source.convert_samples());
 
 
-//To control the playback, rodio provides a type named Sink which represents an audio track.
-use rodio::Sink;
+
 
 let device = rodio::default_output_device().unwrap();
 let sink = Sink::new(&device);
 
 // Add a dummy source of the sake of the example.
 let source = rodio::source::SineWave::new(440);
+//append will add the sound at the end of the sink. It will be played when all the previous sounds have been played.
 sink.append(source);
