@@ -7,6 +7,7 @@ use std::process::exit;
 
 mod window;
 mod draw;
+mod fourier_transformation;
 
 //TODO Fileselector
 //TODO Malen
@@ -15,6 +16,11 @@ mod draw;
 
 
 fn main() {
+    let mut data = fourier_transformation::example_vec();
+    println!("{:?}\n\n", data);
+    fourier_transformation::transform(&mut data);
+    println!("{:?}", data);
+
     // Argumente
     use std::env;
     let args: Vec<String> = env::args().collect();
@@ -28,11 +34,11 @@ fn main() {
     // Überprüfen ob Dateiname vorhanden ist
     if args.len() < 2 {
         println!("Bitte den Dateinamen der Audiodatei als Argument übergeben.");
-        exit(1);
+        // TODO exit(1);
     }
     println!("Filename: {:?}", args[1]);
 
     //Starte Fenster
-    window::openWindow();
+    //window::openWindow();
 
 }
