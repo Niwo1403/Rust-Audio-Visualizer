@@ -18,7 +18,7 @@ mod fourier_transformation;
 fn main() {
     let mut data = fourier_transformation::example_vec();
     println!("{:?}\n\n", data);
-    fourier_transformation::transform(&mut data);
+    data = fourier_transformation::transform(data);
     println!("{:?}", data);
 
     // Argumente
@@ -34,7 +34,7 @@ fn main() {
     // Überprüfen ob Dateiname vorhanden ist
     if args.len() < 2 {
         println!("Bitte den Dateinamen der Audiodatei als Argument übergeben.");
-        // TODO exit(1);
+        exit(1);
     }
     println!("Filename: {:?}", args[1]);
 

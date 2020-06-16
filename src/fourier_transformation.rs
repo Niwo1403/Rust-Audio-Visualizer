@@ -1,12 +1,12 @@
 use dft::{Operation, Plan, c64};
 
-pub fn transform<Complex>(mut data: &mut Vec<Complex<f64>>) -> &mut Vec<Complex<f64>> {
+pub fn transform(mut data: Vec<c64>) -> Vec<c64> {
     let plan = Plan::new(Operation::Forward, 512);
     dft::transform(&mut data, &plan);
-    return &mut data;
+    return data;
 }
 
-pub fn example_vec<Complex>() -> &mut Vec<Complex<f64>> {
+pub fn example_vec() -> Vec<c64> {
     let mut v = vec![c64::new(42.0, 69.0); 512];
-    return &mut v;
+    return v;
 }
