@@ -7,6 +7,6 @@ pub fn transform(mut data: Vec<c64>) -> Vec<c64> {
 }
 
 pub fn example_vec() -> Vec<c64> {
-    let mut v = vec![c64::new(42.0, 69.0); 512];
+    let v = vec![c64::new(42.0, 69.0); 512];
     return v;
 }

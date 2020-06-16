@@ -22,14 +22,14 @@ struct Rect{
 
 trait drawable {
     fn update(&self);
-    fn getVertexBuffer(&self, display: &Display) -> VertexBuffer<Vertex>;
+    fn get_vertex_buffer(&self, display: &Display) -> VertexBuffer<Vertex>;
 }
 
 impl drawable for Rect{
     fn update(&self){
 
     }
-    fn getVertexBuffer(&self, display: &Display) -> VertexBuffer<Vertex>{
+    fn get_vertex_buffer(&self, display: &Display) -> VertexBuffer<Vertex>{
         println!("c10: {}, c11: {}", self.c1[0], self.c1[1]);
 
         let vertex1 = Vertex {position: [self.c1[0], self.c1[1]]};
@@ -44,12 +44,12 @@ impl drawable for Rect{
     }
 }
 
-static mut listRects : LinkedList<Rect> = LinkedList::new();
+static mut LIST_RECTS: LinkedList<Rect> = LinkedList::new();
 
-pub fn initFrequencyBars(){
+pub fn init_frequency_bars(){
 
 
-    for i in [0..20] {
+    for i in 0..20 {
         let width = 1.0;
         let offset = 0.5;
 
@@ -59,7 +59,7 @@ pub fn initFrequencyBars(){
         let rect = Rect {c1: [-0.4, 0.0], c2: [-0.3, 0.0], c3: [-0.3, 0.4], c4: [-0.4, 0.4] };
 
         unsafe{
-            listRects.push_back(rect);
+            LIST_RECTS.push_back(rect);
         }
     }
 
@@ -69,7 +69,7 @@ pub fn initFrequencyBars(){
 
 }
 
-pub fn drawVisualizer(mut target: Frame,  display: &Display, startTime: &SystemTime){
+pub fn draw_visualizer(mut target: Frame, display: &Display, start_time: &SystemTime){
 
     /*#[derive(Copy, Clone)]
     struct Vertex {
@@ -141,11 +141,11 @@ Process finished with exit code 1;
 
     unsafe {
         let mut i = 0;
-        for rect in listRects.iter_mut() {
+        for rect in LIST_RECTS.iter_mut() {
             //target.draw(&vertex_buffer, &indices, &program, &glium::uniforms::EmptyUniforms, &Default::default()).unwrap();
             println!("Count: {}", i);
             i = i+1;
-            target.draw(&rect.getVertexBuffer(display), &indices, &program, &glium::uniforms::EmptyUniforms, &Default::default()).unwrap();
+            target.draw(&rect.get_vertex_buffer(display), &indices, &program, &glium::uniforms::EmptyUniforms, &Default::default()).unwrap();
         }
     }
 

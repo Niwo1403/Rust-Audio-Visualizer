@@ -44,6 +44,6 @@ fn main() {
 
 
     // Start Window
-    window::openWindow();
+    window::open_window();
 
 }

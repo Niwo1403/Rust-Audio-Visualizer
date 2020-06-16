@@ -2,10 +2,10 @@
 use glium::{glutin, Surface, Frame, Display};
 use std::time::{SystemTime, UNIX_EPOCH};
 
-use super::Frequency_Bars;
+use super::frequency_bars;
 
-pub fn draw(mut target: Frame,  display: &Display, startTime: &SystemTime) {
+pub fn draw(mut target: Frame, display: &Display, start_time: &SystemTime) {
 
-    Frequency_Bars::drawVisualizer(target, display, startTime);
+    frequency_bars::draw_visualizer(target, display, start_time);
 
 }
