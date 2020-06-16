@@ -12,7 +12,7 @@ use rodio::Sink;
 - Choose an output with the devices
 - Call play_raw(output, source).
  */
-fn main() {
+fn play_audio() {
     let device = rodio::default_output_device().unwrap();
     let sink = Sink::new(&device);
 
