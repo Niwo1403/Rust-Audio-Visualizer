@@ -9,7 +9,7 @@ mod window;
 mod draw;
 mod fourier_transformation;
 mod audio_management;
-
+mod frequency_bars;
 
 //TODO Fileselector
 //TODO Malen
