@@ -18,7 +18,7 @@ mod audio_management;
 
 fn main() {
     // Read audio
-    audio_management::main();
+    audio_management::play_audio();
 
     // FFT
     let mut data = fourier_transformation::example_vec();
