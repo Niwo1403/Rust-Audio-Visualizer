@@ -3,7 +3,7 @@
 use std::fs::File;
 use std::io::BufReader;
 //Rust object that represents a sound should implement the Source trait.
-use rodio::Source;
+//use rodio::Source;
 //type Sink controls  playback (represents audio track).
 use rodio::Sink;
 
