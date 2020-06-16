@@ -19,7 +19,7 @@ pub fn play_audio(arg: &str) {
 
     let file = File::open(arg).unwrap();
     let source = rodio::Decoder::new(BufReader::new(file)).unwrap();
-    //rodio::play_raw(&device, source.convert_samples());
+    //rodio::play_raw(&device, source.convert_samples()); //
 
     sink.append(source);
 }
