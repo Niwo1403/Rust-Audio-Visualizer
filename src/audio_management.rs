@@ -16,26 +16,23 @@
 
 use std::fs::File;
 use std::io::BufReader;
+//Rust object that represents a sound should implement the Source trait.
 use rodio::Source;
-//To control the playback, rodio provides a type named Sink which represents an audio track.
+//type Sink controls  playback (represents audio track).
 use rodio::Sink;
 
-let device = rodio::default_output_device().unwrap();
+/*to play a sound:
+- Create an object that represents the streaming sound. It can be a sine wave, a buffer, a decoder.
+- Choose an output with the devices
+- Call play_raw(output, source).
+ */
+fn main() {
+    let device = rodio::default_output_device().unwrap();
+    let sink = Sink::new(&device);
 
-let file = File::open("sound.ogg").unwrap();
-let source = rodio::Decoder::new(BufReader::new(file)).unwrap();
+    let file = File::open("sound.ogg").unwrap();
+    let source = rodio::Decoder::new(BufReader::new(file)).unwrap();
+    //rodio::play_raw(&device, source.convert_samples());
 
-
-let device = rodio::default_output_device().unwrap();
-let sink = Sink::new(&device);
-
-// Add a dummy source for the sake of the example.
-let source = rodio::source::SineWave::new(440);
-//append will add the sound at the end of the sink. It will be played when all the previous sounds have been played.
-sink.append(source);
-
-//Required methods:
-fn current_frame_len(&self) -> Option<usize> //Returns the number of samples before the current frame ends
-fn channels(&self) -> u16 //Returns the number of channels
-fn sample_rate(&self) -> u32 //Returns the rate at which the source should be played in number of samples per second
-fn total_duration(&self) -> Option<Duration> //Returns the total duration of this source, if known
+    sink.append(source);
+}
