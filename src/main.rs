@@ -8,6 +8,7 @@ use std::process::exit;
 mod window;
 mod draw;
 mod fourier_transformation;
+mod audio_management;
 
 //TODO Fileselector
 //TODO Malen
@@ -16,6 +17,10 @@ mod fourier_transformation;
 
 
 fn main() {
+    // Read audio
+    audio_management::main();
+
+    // FFT
     let mut data = fourier_transformation::example_vec();
     println!("{:?}\n\n", data);
     data = fourier_transformation::transform(data);
@@ -38,7 +43,7 @@ fn main() {
     }
     println!("Filename: {:?}", args[1]);
 
-    //Starte Fenster
-    //window::openWindow();
+    // Start Window
+    window::openWindow();
 
 }
