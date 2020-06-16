@@ -17,9 +17,6 @@ mod audio_management;
 
 
 fn main() {
-    // Read audio
-    audio_management::play_audio();
-
     // FFT
     let mut data = fourier_transformation::example_vec();
     println!("{:?}\n\n", data);
@@ -41,7 +38,9 @@ fn main() {
         println!("Bitte den Dateinamen der Audiodatei als Argument übergeben.");
         exit(1);
     }
-    println!("Filename: {:?}", args[1]);
+    // Read audio
+    audio_management::play_audio(&args[1]);
+
 
     // Start Window
     window::openWindow();
