@@ -9,3 +9,4 @@ edition = "2018"
 [dependencies]
 glium = "*"
 dft = "0.5.5"
+rodio = "0.11.0"
