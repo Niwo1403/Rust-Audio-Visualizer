@@ -17,9 +17,9 @@ pub fn play_audio(arg: &str) {
     let device = rodio::default_output_device().unwrap();
     let sink = Sink::new(&device);
 
-    let file = File::open("sound.ogg").unwrap();
+    let file = File::open(arg).unwrap();  //added
     let source = rodio::Decoder::new(BufReader::new(file)).unwrap();
-    //rodio::play_raw(&device, source.convert_samples());
+    //rodio::play_raw(&device, source.convert_samples()); //
 
     sink.append(source);
 }
