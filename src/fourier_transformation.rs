@@ -6,7 +6,7 @@ pub fn transform(mut data: Vec<c64>) -> Vec<c64> {
     return data;
 }
 
-pub fn data_to_c64(byte_data: Vec<i8>) -> Vec<c64> {
+pub fn data_to_c64(byte_data: Vec<u8>) -> Vec<c64> {
     let data = byte_data.into_iter()
         .map( |number| {c64::new(number as f64, 0.0)})
         .collect::<Vec<c64>>();
