@@ -4,8 +4,11 @@ use glutin::dpi::LogicalSize;
 
 use super::draw;
 use std::time::SystemTime;
+use super::frequency_bars::init_frequency_bars;
 
 pub fn open_window(){
+
+    init_frequency_bars();
 
     let mut event_loop = glutin::event_loop::EventLoop::new();
     let wb = glutin::window::WindowBuilder::new().with_title("Aduio Visualizer").with_inner_size(LogicalSize::new(600, 600));
