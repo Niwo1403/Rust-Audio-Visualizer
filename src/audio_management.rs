@@ -1,7 +1,6 @@
 //Source: https://docs.rs/rodio/0.11.0/rodio/
 
-use std::fs::File;
-use std::io::BufReader;
+use std::io::{BufReader, Read};
 //use rodio::Source;    //Rust object that represents a sound should implement the Source trait.
 use rodio::Sink;       //type Sink controls  playback (represents audio track).
 use std::fs::File;     //to read bytes of file
@@ -23,10 +22,15 @@ pub fn play_audio(arg: &str) {
     sink.append(source);
 }
 
+pub fn read_file() -> Vec<i8> {
+    let mut f = File::open(arg)?;
+    let mut buffer: Vec<u8> = Vec::new();
+    // Read all bytes until EOF in this source, placing them into buf.
+    // All bytes read from this source will be appended to the specified buffer buf.This function will continuously call read() to append more data to buf until read() returns either Ok(0) or an error of non-ErrorKind::Interrupted kind.
+    // If successful, this function will return the total number of bytes read.
+    let mut read_into: Vec<i8> = vec![0; 128];
+    f.read_i8_into(&mut read_into).unwrap(); // read_to_end(&mut buffer)?;
+    return read_into;
+}
 
-let mut f = File::open(arg)?;
-let mut buffer = Vec::new();
-// Read all bytes until EOF in this source, placing them into buf.
-// All bytes read from this source will be appended to the specified buffer buf.This function will continuously call read() to append more data to buf until read() returns either Ok(0) or an error of non-ErrorKind::Interrupted kind.
-// If successful, this function will return the total number of bytes read.
-f.read_to_end(&mut buffer)?;
+
