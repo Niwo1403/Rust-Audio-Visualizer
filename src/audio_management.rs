@@ -21,7 +21,9 @@ pub fn play_audio(arg: &str) {
 
 
     let mut read_into: Vec<i8> = vec![0; 128];
+    // TODO? Welche Byte ließt read_i8_into beim zweiten Aufruf?
     source.convert_samples().read_i8_into(&mut read_into).unwrap();
+    // TODO? Kann man Bytes direkt abspielen?
 
     sink.append(source);
 }
