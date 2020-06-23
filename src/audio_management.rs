@@ -2,7 +2,7 @@
 
 use std::io::{BufReader, Read};
 //use rodio::Source;    //Rust object that represents a sound should implement the Source trait.
-use rodio::Sink;       //type Sink controls  playback (represents audio track).
+use rodio::{Sink, Source};       //type Sink controls  playback (represents audio track).
 use std::fs::File;     //to read bytes of file
 
 /*to play a sound:
@@ -18,6 +18,10 @@ pub fn play_audio(arg: &str) {
     let file = File::open(arg).unwrap();  //added
     let source = rodio::Decoder::new(BufReader::new(file)).unwrap();
     //rodio::play_raw(&device, source.convert_samples()); //
+
+
+    let mut read_into: Vec<i8> = vec![0; 128];
+    source.convert_samples().read_i8_into(&mut read_into).unwrap();
 
     sink.append(source);
 }
