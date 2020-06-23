@@ -22,7 +22,8 @@ pub fn play_audio(arg: &str) {
     sink.append(source);
 }
 
-pub fn read_file() -> Vec<i8> {
+/*
+pub fn read_file(arg: &str) -> Vec<i8> {
     let mut f = File::open(arg)?;
     let mut buffer: Vec<u8> = Vec::new();
     // Read all bytes until EOF in this source, placing them into buf.
@@ -32,5 +33,5 @@ pub fn read_file() -> Vec<i8> {
     f.read_i8_into(&mut read_into).unwrap(); // read_to_end(&mut buffer)?;
     return read_into;
 }
-
+*/
 
