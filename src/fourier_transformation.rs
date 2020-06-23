@@ -6,7 +6,9 @@ pub fn transform(mut data: Vec<c64>) -> Vec<c64> {
     return data;
 }
 
-pub fn example_vec() -> Vec<c64> {
-    let v = vec![c64::new(42.0, 69.0); 512];
-    return v;
+pub fn data_to_c64(byte_data: Vec<i8>) -> Vec<c64> {
+    let data = byte_data.into_iter()
+        .map( |number| {c64::new(number as f64, 0.0)})
+        .collect::<Vec<c64>>();
+    return data;
 }

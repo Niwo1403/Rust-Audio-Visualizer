@@ -19,7 +19,8 @@ mod frequency_bars;
 
 fn main() {
     // FFT
-    let mut data = fourier_transformation::example_vec();
+    let data: Vec<i8> = vec![1, 2, 3, 4];
+    let mut data = fourier_transformation::data_to_c64(data);
     println!("{:?}\n\n", data);
     data = fourier_transformation::transform(data);
     println!("{:?}", data);
