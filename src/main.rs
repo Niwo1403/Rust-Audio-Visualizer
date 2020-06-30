@@ -6,7 +6,6 @@ use std::process::exit;
 
 
 mod window;
-mod draw;
 mod fourier_transformation;
 mod audio_management;
 mod frequency_bars;
@@ -46,6 +45,6 @@ fn main() {
 
 
     // Start Window
-    window::open_window();
+    window::start_window();
 
 }

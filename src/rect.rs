@@ -8,18 +8,19 @@ pub struct Vertex {
 implement_vertex!(Vertex, position);
 
 pub struct Rect{
-    c1: [f32; 2],
-    c2: [f32; 2],
-    c3: [f32; 2],
-    c4: [f32; 2],
+    x: f32,
+    y: f32,
+    width: f32,
+    height: f32,
     redraw: bool,
 }
 
 pub trait drawable {
     fn update(&mut self);
     fn get_vertex_buffer(&self, display: &Display) -> VertexBuffer<Vertex>;
-    fn new(c1 : [f32; 2], c2 : [f32; 2], c3 : [f32; 2], c4 : [f32; 2]) -> Rect;
+    fn new(x : f32, y : f32, width : f32, height : f32) -> Rect;
     fn redraw(&mut self) -> bool;
+    fn set_height(&mut self, height: f32);
 }
 
 impl drawable for Rect{
@@ -27,18 +28,17 @@ impl drawable for Rect{
         self.redraw = true;
     }
     fn get_vertex_buffer(&self, display: &Display) -> VertexBuffer<Vertex>{
-        let vertex1 = Vertex {position: [self.c1[0], self.c1[1]]};
-        let vertex2 = Vertex {position: [self.c1[0], self.c1[1]]};
-        let vertex3 = Vertex {position: [self.c1[0], self.c1[1]]};
-        let vertex4 = Vertex {position: [self.c1[0], self.c1[1]]};
+        let vertex1 = Vertex {position: [self.x, self.y]};
+        let vertex2 = Vertex {position: [self.x, self.y+self.height]};
+        let vertex3 = Vertex {position: [self.x+self.width, self.y+self.height]};
+        let vertex4 = Vertex {position: [self.x+self.width, self.y]};
 
         let shape = vec![vertex1, vertex2, vertex3, vertex4];
-
         let vertex_buffer = glium::VertexBuffer::new(display, &shape).unwrap();
         return vertex_buffer;
     }
-    fn new(c1 : [f32; 2], c2 : [f32; 2], c3 : [f32; 2], c4 : [f32; 2]) -> Rect{
-        return Rect {c1, c2, c3, c4, redraw: true };
+    fn new(x : f32, y : f32, width : f32, height : f32) -> Rect{
+        return Rect {x, y, width, height, redraw: true };
     }
     fn redraw(&mut self) -> bool{
         if self.redraw{
@@ -47,5 +47,9 @@ impl drawable for Rect{
         }else {
             return false;
         }
+    }
+    fn set_height(&mut self, height: f32){
+        self.height = height;
+        self.update();
     }
 }
