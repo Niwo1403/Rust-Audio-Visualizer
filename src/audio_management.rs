@@ -3,7 +3,8 @@
 use std::io::{BufReader, Read};
 //use rodio::Source;    //Rust object that represents a sound should implement the Source trait.
 use rodio::{Sink, Source, Sample};       //type Sink controls  playback (represents audio track).
-use std::fs::File;     //to read bytes of file
+use std::fs::File;
+use std::time::Duration;     //to read bytes of file
 
 /*to play a sound:
 - Create an object that represents the streaming sound. It can be a sine wave, a buffer, a decoder.
@@ -31,13 +32,32 @@ pub fn play_audio(arg: &str) {
                 // get f32 and pass to transformation
                 let val = elm.to_f32();
                 // visualtize(val);
-                return Some(val);
+                return Some(val)
             } else {
-                return None;
+                return None
             }
         }
     };
+    impl Source for WrappedSource {
+        fn current_frame_len(&self) -> Option<usize> {
+            return self.current_frame_len();
+        }
+
+        fn channels(&self) -> u16 {
+            return self.channels();
+        }
+
+        fn sample_rate(&self) -> u32 {
+            return self.sample_rate();
+        }
+
+        fn total_duration(&self) -> Option<Duration> {
+            return self.total_duration();
+        }
+    };
     let wrapped_source = WrappedSource { source_box: Box::new(source.convert_samples())};
+
+    let example_var = Box::new(source.convert_samples());
 
     sink.append(source);
 }
