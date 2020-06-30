@@ -60,7 +60,7 @@ pub fn start_window(){
     let display = glium::Display::new(wb, cb, &event_loop).unwrap();
 
     let mut drawMethode = freq_bars::init_frequency_bars();
-
+    //loop
     event_loop.run(move |ev, _, control_flow| {
         let next_frame_time = std::time::Instant::now() +
             std::time::Duration::from_nanos(16_666_667);
