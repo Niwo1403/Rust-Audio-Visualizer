@@ -20,18 +20,21 @@ pub fn play_audio(arg: &str) {
     //rodio::play_raw(&device, source.convert_samples()); //
 
     struct WrappedSource {
-        source_box: std::boxed::Box<rodio::source::SamplesConverter<rodio::Decoder<BufReader<File>>, Sample>>,
+        source_box: std::boxed::Box<rodio::source::SamplesConverter<rodio::Decoder<BufReader<File>>, dyn Sample>>,
     };
     impl Iterator for WrappedSource {
-        type Item = Option<I::Item>;
+        type Item = Option<f32>;
 
-        fn next(&mut self) -> Option<f32::Item> {
+        fn next(&mut self) -> Option<f32> {
             let elm = self.source_box.next();
             if let Some(elm) = elm {
-                // do sth with elm...
-                // visualtize(elm);
+                // get f32 and pass to transformation
+                let val = elm.to_f32();
+                // visualtize(val);
+                return Some(val);
+            } else {
+                return None;
             }
-            return elm;
         }
     };
     let wrapped_source = WrappedSource { source_box: Box::new(source.convert_samples())};

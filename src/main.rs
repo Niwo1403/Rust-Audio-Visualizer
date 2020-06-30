@@ -19,7 +19,7 @@ mod rect;
 
 fn main() {
     // FFT
-    let data: Vec<u8> = vec![1, 2, 3, 4];
+    let data: Vec<f32> = vec![1.0, 2.0, 3.0, 4.0];
     let mut data = fourier_transformation::data_to_c64(data);
     println!("{:?}\n\n", data);
     data = fourier_transformation::transform(data);
