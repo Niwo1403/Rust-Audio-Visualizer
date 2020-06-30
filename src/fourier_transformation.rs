@@ -12,3 +12,25 @@ pub fn data_to_c64(byte_data: Vec<u8>) -> Vec<c64> {
         .collect::<Vec<c64>>();
     return data;
 }
+
+fn thread_example() {
+    // Thread Test
+    let t1 = std::thread::spawn(move || {
+        for i in 1..1000 {
+            if i%100 == 0 {
+                println!("1");
+                std::thread::sleep(std::time::Duration::from_millis(1));
+            }
+        }
+    });
+    let t2 = std::thread::spawn(move || {
+        for i in 1..1000 {
+            if i%100 == 0 {
+                println!("2");
+                std::thread::sleep(std::time::Duration::from_millis(1));
+            }
+        }
+    });
+    t1.join();
+    t2.join();
+}

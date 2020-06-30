@@ -2,7 +2,7 @@
 
 use std::io::{BufReader, Read};
 //use rodio::Source;    //Rust object that represents a sound should implement the Source trait.
-use rodio::{Sink, Source};       //type Sink controls  playback (represents audio track).
+use rodio::{Sink, Source, Sample};       //type Sink controls  playback (represents audio track).
 use std::fs::File;     //to read bytes of file
 
 /*to play a sound:
@@ -19,11 +19,22 @@ pub fn play_audio(arg: &str) {
     let source = rodio::Decoder::new(BufReader::new(file)).unwrap();
     //rodio::play_raw(&device, source.convert_samples()); //
 
+    struct WrappedSource {
+        source_box: std::boxed::Box<rodio::source::SamplesConverter<rodio::Decoder<BufReader<File>>, Sample>>,
+    };
+    impl Iterator for WrappedSource {
+        type Item = Option<I::Item>;
 
-    let mut read_into: Vec<i8> = vec![0; 128];
-    // TODO? Welche Byte ließt read_i8_into beim zweiten Aufruf?
-    source.convert_samples().read_i8_into(&mut read_into).unwrap();
-    // TODO? Kann man Bytes direkt abspielen?
+        fn next(&mut self) -> Option<f32::Item> {
+            let elm = self.source_box.next();
+            if let Some(elm) = elm {
+                // do sth with elm...
+                // visualtize(elm);
+            }
+            return elm;
+        }
+    };
+    let wrapped_source = WrappedSource { source_box: Box::new(source.convert_samples())};
 
     sink.append(source);
 }
