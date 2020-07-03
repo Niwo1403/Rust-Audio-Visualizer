@@ -16,8 +16,17 @@ mod rect;
 //TODO Audiodatein lesen
 //TODO FFT-Bibliotheken benutzen
 
+use std::collections::VecDeque;
+use std::iter::IntoIterator;
+use std::iter::FromIterator;
+use std::sync::mpsc;
+use std::sync::mpsc::{Sender, Receiver};
+use crate::window::window_struct;
 
 fn main() {
+
+    let (ValueSender, ValueReciver): (Sender<f32>, Reciver<f32>) = mpsc::channel();
+
     // FFT
     let data: Vec<f32> = vec![1.0, 2.0, 3.0, 4.0];
     let mut data = fourier_transformation::data_to_c64(data);
@@ -45,6 +54,6 @@ fn main() {
 
 
     // Start Window
-    window::start_window();
+    window::start_window(ValueReciver);
 
 }

@@ -24,16 +24,16 @@ impl window_struct{
         let mut event_loop = glutin::event_loop::EventLoop::new();
         let wb = glutin::window::WindowBuilder::new().with_title("Aduio Visualizer").with_inner_size(LogicalSize::new(600, 600));
         let cb = glutin::ContextBuilder::new();
-        let display = glium::Display::new(wb, cb, &event_loop).unwrap();
-
+        let mut display = glium::Display::new(wb, cb, &event_loop).unwrap();
+        let mut display_ref = &mut display;
 
         event_loop.run( move |ev, _, control_flow| {
             let next_frame_time = std::time::Instant::now() +
                 std::time::Duration::from_nanos(16_666_667);
             //----------------draw something--------------------------
 
-            let mut target = display.draw();
-            self.draw_methode.draw_visualizer(target, &display);
+            let mut target = display_ref.draw();
+            self.draw_methode.draw_visualizer(target, display_ref);
 
             //---------------end drawing------------------------------
             *control_flow = glutin::event_loop::ControlFlow::WaitUntil(next_frame_time);
@@ -53,13 +53,17 @@ impl window_struct{
 
 }
 
-pub fn start_window(){
+pub fn start_window(ValueReciver: Reciver<f32>){
     let mut event_loop = glutin::event_loop::EventLoop::new();
     let wb = glutin::window::WindowBuilder::new().with_title("Aduio Visualizer").with_inner_size(LogicalSize::new(600, 600));
     let cb = glutin::ContextBuilder::new();
     let display = glium::Display::new(wb, cb, &event_loop).unwrap();
 
-    let mut drawMethode = freq_bars::init_frequency_bars();
+    let mut target = display.draw();
+    target.clear_color(1.0, 1.0, 1.0, 1.0);
+    target.finish().unwrap();
+
+    let mut drawMethode = freq_bars::init_frequency_bars(ValueReciver);
     //loop
     event_loop.run(move |ev, _, control_flow| {
         let next_frame_time = std::time::Instant::now() +
