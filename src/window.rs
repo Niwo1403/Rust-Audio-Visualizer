@@ -4,7 +4,7 @@ use glutin::dpi::LogicalSize;
 
 use std::time::SystemTime;
 use crate::frequency_bars::freq_bars;
-
+use std::sync::mpsc::Receiver;
 
 
 pub struct window_struct{
@@ -13,9 +13,9 @@ pub struct window_struct{
 }
 
 impl window_struct{
-    pub fn open_window() -> window_struct{
+    pub fn open_window(ValueReceiver: Receiver<f32>) -> window_struct{
 
-        let mut drawMethode = freq_bars::init_frequency_bars();
+        let mut drawMethode = freq_bars::init_frequency_bars(ValueReceiver);
         let window = window_struct {draw_methode: drawMethode};
         return window;
     }
@@ -53,7 +53,7 @@ impl window_struct{
 
 }
 
-pub fn start_window(ValueReciver: Reciver<f32>){
+pub fn start_window(ValueReceiver: Receiver<f32>){
     let mut event_loop = glutin::event_loop::EventLoop::new();
     let wb = glutin::window::WindowBuilder::new().with_title("Aduio Visualizer").with_inner_size(LogicalSize::new(600, 600));
     let cb = glutin::ContextBuilder::new();
@@ -63,7 +63,7 @@ pub fn start_window(ValueReciver: Reciver<f32>){
     target.clear_color(1.0, 1.0, 1.0, 1.0);
     target.finish().unwrap();
 
-    let mut drawMethode = freq_bars::init_frequency_bars(ValueReciver);
+    let mut drawMethode = freq_bars::init_frequency_bars(ValueReceiver);
     //loop
     event_loop.run(move |ev, _, control_flow| {
         let next_frame_time = std::time::Instant::now() +

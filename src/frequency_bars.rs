@@ -23,9 +23,9 @@ pub struct freq_bars{
 }
 
 impl freq_bars{
-    pub fn init_frequency_bars(ValueReciver: Reciver<f32>) -> freq_bars{
+    pub fn init_frequency_bars(ValueReceiver: Receiver<f32>) -> freq_bars{
         let numRects = 512;
-        let mut freq_bars = freq_bars{ list_rects: vec![], valueList: VecDeque::with_capacity(numRects), rec: ValueReciver};
+        let mut freq_bars = freq_bars{ list_rects: vec![], valueList: VecDeque::with_capacity(numRects), rec: ValueReceiver};
         for i in 0..numRects {
             let width = 2.0;
             let offset = 1.0;

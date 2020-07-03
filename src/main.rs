@@ -25,7 +25,7 @@ use crate::window::window_struct;
 
 fn main() {
 
-    let (ValueSender, ValueReciver): (Sender<f32>, Reciver<f32>) = mpsc::channel();
+    let (ValueSender, ValueReciver): (Sender<f32>, Receiver<f32>) = mpsc::channel();
 
     // FFT
     let data: Vec<f32> = vec![1.0, 2.0, 3.0, 4.0];
