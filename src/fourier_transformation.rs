@@ -13,6 +13,13 @@ pub fn data_to_c64(byte_data: Vec<f32>) -> Vec<c64> {
     return data;
 }
 
+pub fn data_to_f32(byte_data: Vec<c64>) -> Vec<f32> {
+    let data = byte_data.into_iter()
+        .map( |number| {number.re as f32})
+        .collect::<Vec<f32>>();
+    return data;
+}
+
 fn thread_example() {
     // Thread Test
     let t1 = std::thread::spawn(move || {
