@@ -37,21 +37,21 @@ pub fn play_audio(arg: &str, value_sender: Sender<f32>) {
             return elm;
         }
     };
-    impl <S> Source for WrappedSource <S> where S: Iterator<Item=f32> {
+    impl <S> Source for WrappedSource <S> where S: Iterator<Item=f32>, S: Source {
         fn current_frame_len(&self) -> Option<usize> {
-            return self.current_frame_len();
+            return (*self.source_box).current_frame_len();
         }
 
         fn channels(&self) -> u16 {
-            return self.channels();
+            return (*self.source_box).channels();
         }
 
         fn sample_rate(&self) -> u32 {
-            return self.sample_rate();
+            return (*self.source_box).sample_rate();
         }
 
         fn total_duration(&self) -> Option<Duration> {
-            return self.total_duration();
+            return (*self.source_box).total_duration();
         }
     };
     let wrapped_source:WrappedSource<rodio::source::SamplesConverter<Decoder<BufReader<File>>, f32>> = WrappedSource { source_box: Box::new(source.convert_samples()), value_sender: value_sender};
