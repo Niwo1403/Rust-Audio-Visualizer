@@ -54,10 +54,10 @@ pub fn play_audio(arg: &str, value_sender: Sender<f32>) {
             return self.total_duration();
         }
     };
-    //let wrapped_source:WrappedSource<rodio::source::SamplesConverter<Decoder<BufReader<File>>, f32>> = WrappedSource { source_box: Box::new(source.convert_samples()), value_sender: value_sender};
+    let wrapped_source:WrappedSource<rodio::source::SamplesConverter<Decoder<BufReader<File>>, f32>> = WrappedSource { source_box: Box::new(source.convert_samples()), value_sender: value_sender};
 
 
-    sink.append(source);
+    sink.append(wrapped_source);
 }
 
 /*
