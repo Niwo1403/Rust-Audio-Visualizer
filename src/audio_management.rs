@@ -58,27 +58,10 @@ pub fn play_audio(arg: &str) {
             return self.total_duration();
         }
     };
-    let wrapped_source = WrappedSource { source_box: Box::new(source.convert_samples())};
+    let wrapped_source:WrappedSource<rodio::source::SamplesConverter<rodio::decoder::Decoder<BufReader<File>>, f32>> = WrappedSource { source_box: Box::new(source.convert_samples())};
 
-    /*
-    Erhaltene Fehlermeldung:
 
-    error[E0283]: type annotations needed for `audio_management::play_audio::WrappedSource<rodio::source::samples_converter::SamplesConverter<rodio::decoder::Decoder<std::io::BufReader<std::fs::File>>, D>>`
-  --> src\audio_management.rs:61:70
-   |
-61 |     let wrapped_source = WrappedSource { source_box: Box::new(source.convert_samples())};
-   |         --------------                                               ^^^^^^^^^^^^^^^ cannot infer type for type parameter `D` declared on the method `convert_samples`
-   |         |
-   |         consider giving `wrapped_source` the explicit type `audio_management::play_audio::WrappedSource<rodio::source::samples_converter::SamplesConverter<rodio::decoder::Decoder<std::io::BufReader<std::fs::File>>, D>>`, where the type parameter `D` is specified
-   |
-   = note: cannot resolve `_: rodio::conversions::sample::Sample`
-    */
-
-    // Um Typ in IDE anzeigen zu lassen:
-    let example_var = Box::new(source.convert_samples());
-    let example_va2 = source.convert_samples();
-
-    sink.append(source);
+    sink.append(wrapped_source);
 }
 
 /*
