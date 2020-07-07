@@ -2,26 +2,28 @@
 
 use std::io::{BufReader, Read};
 //use rodio::Source;    //Rust object that represents a sound should implement the Source trait.
-use rodio::{Sink, Source, Sample};       //type Sink controls  playback (represents audio track).
+use rodio::{Sink, Source, Sample, Decoder};       //type Sink controls  playback (represents audio track).
 use std::fs::File;
 use std::time::Duration;     //to read bytes of file
+use std::sync::mpsc::Sender;
 
 /*to play a sound:
 - Create an object that represents the streaming sound. It can be a sine wave, a buffer, a decoder.
 - Choose an output with the devices
 - Call play_raw(output, source).
  */
-pub fn play_audio(arg: &str) {
+pub fn play_audio(arg: &str, value_sender: Sender<f32>) {
     println!("Filename: {:?}", arg);
     let device = rodio::default_output_device().unwrap();
     let sink = Sink::new(&device);
 
     let file = File::open(arg).unwrap();  //added
-    let source = rodio::Decoder::new(BufReader::new(file)).unwrap();
+    let source = Decoder::new(BufReader::new(file)).unwrap();
     //rodio::play_raw(&device, source.convert_samples()); //
 
     struct WrappedSource <T> {
         source_box: std::boxed::Box<T>, //  rodio::source::SamplesConverter<rodio::Decoder<BufReader<File>>, dyn Sample>>,
+        value_sender: Sender<f32>
     };
     impl <T> Iterator for WrappedSource <T> where T: Iterator<Item=f32> {
         type Item = f32;
@@ -30,7 +32,7 @@ pub fn play_audio(arg: &str) {
             let elm = (*self.source_box).next();
             if let Some(elm) = elm {
                 // pass f32 to transformation
-                // visualtize(elm);
+                self.value_sender.send(elm);
             }
             return elm;
         }
@@ -52,7 +54,7 @@ pub fn play_audio(arg: &str) {
             return self.total_duration();
         }
     };
-    let wrapped_source:WrappedSource<rodio::source::SamplesConverter<rodio::decoder::Decoder<BufReader<File>>, f32>> = WrappedSource { source_box: Box::new(source.convert_samples())};
+    let wrapped_source:WrappedSource<rodio::source::SamplesConverter<Decoder<BufReader<File>>, f32>> = WrappedSource { source_box: Box::new(source.convert_samples()), value_sender: value_sender};
 
 
     sink.append(wrapped_source);

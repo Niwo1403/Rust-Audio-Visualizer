@@ -72,7 +72,7 @@ fn main() {
         exit(1);
     }
     // Read audio
-    audio_management::play_audio(&args[1]);
+    audio_management::play_audio(&args[1], ValueSender);
 
 
     // Start Window
