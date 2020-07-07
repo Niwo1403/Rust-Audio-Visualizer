@@ -66,8 +66,11 @@ pub fn start_window(ValueReceiver: Receiver<f32>){
     let mut drawMethode = freq_bars::init_frequency_bars(ValueReceiver);
     //loop
     event_loop.run(move |ev, _, control_flow| {
+        /*let next_frame_time = std::time::Instant::now() +
+            std::time::Duration::from_nanos(16_666_667);*/
+
         let next_frame_time = std::time::Instant::now() +
-            std::time::Duration::from_nanos(16_666_667);
+            std::time::Duration::from_secs(1);
 
         //----------------draw something--------------------------
 

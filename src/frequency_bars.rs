@@ -6,7 +6,7 @@ use std::collections::{LinkedList, VecDeque};
 use super::rect::{Rect, drawable};
 use crate::fourier_transformation;
 use std::sync::mpsc::Receiver;
-
+use dft::c64;
 
 #[derive(Copy, Clone)]
 struct Vertex {
@@ -22,12 +22,19 @@ static NUM_RECTS : i64 = 256;
 pub struct freq_bars{
     list_rects: Vec<Rect>,
     valueList: VecDeque<f32>,
-    rec: Receiver<f32>
+    rec: Receiver<f32>,
+    windowCoefficients: Vec<f32>,
 }
 
 impl freq_bars{
     pub fn init_frequency_bars(ValueReceiver: Receiver<f32>) -> freq_bars{
-        let mut freq_bars = freq_bars{ list_rects: vec![], valueList: VecDeque::with_capacity((NUM_RECTS*2) as usize), rec: ValueReceiver};
+        let fftWindowLength = (NUM_RECTS*2) as usize;
+        let mut windowCoefficients = vec![0 as f32; fftWindowLength];
+        for i in 0..fftWindowLength {
+            windowCoefficients[i] = 0.54 - 0.46*(2.0*PI*i as f32/fftWindowLength as f32).cos();
+        }
+
+        let mut freq_bars = freq_bars{ list_rects: vec![], valueList: VecDeque::with_capacity((NUM_RECTS*2) as usize), rec: ValueReceiver, windowCoefficients: windowCoefficients};
         for i in 0..NUM_RECTS{
             let width = 2.0;
             let offset = 1.0;
@@ -52,15 +59,34 @@ impl freq_bars{
 
     pub fn draw_visualizer(&mut self, mut target: Frame, display: &Display){
         //Daten vom Player bekommen und mit fft umwandeln
-        let newVal = self.rec.recv().unwrap();
-        self.valueList.push_back(newVal);
-        while(self.valueList.len() > (NUM_RECTS*2) as usize){
-            self.valueList.pop_front();
+
+
+        /*let recResult = self.rec.try_recv();
+        if(recResult.is_ok()){
+            let newVal = recResult.unwrap();
+            println!("Rec new val: {}", newVal);
+            self.valueList.push_back(newVal);
+            while(self.valueList.len() > (NUM_RECTS*2) as usize){
+                self.valueList.pop_front();
+            }
+        }*/
+
+        let mut recResult = self.rec.try_recv();
+        while(recResult.is_ok()){
+            let newVal = recResult.unwrap();
+            println!("Rec new val: {}", newVal);
+            self.valueList.push_back(newVal);
+            while(self.valueList.len() > (NUM_RECTS*2) as usize){
+                self.valueList.pop_front();
+            }
+            recResult = self.rec.try_recv();
         }
+
 
         let mut valueSlices = self.valueList.as_slices();
         let mut fourierInput = valueSlices.0.to_vec();
         fourierInput.append(&mut valueSlices.1.to_vec());
+        fourierInput = self.applyWindow((NUM_RECTS * 2) as usize, fourierInput);
 
         let mut fourierOutput = computeFFT(fourierInput);
 
@@ -73,7 +99,6 @@ impl freq_bars{
 
 
             i += 1;
-            //if (i > (NUM_RECTS-1) as usize) {break};
         }
 
         /*for i in 0..NUM_RECTS{
@@ -132,29 +157,37 @@ impl freq_bars{
 
     }
 
+    fn applyWindow(&self, fftWindowlength: usize, mut samples: Vec<f32>) -> Vec<f32>{
+        let mut sample = 0 as f32;
+        for i in 0..fftWindowlength{
+            sample = samples[i] * self.windowCoefficients[i];
+                samples[i] = sample;
+        }
+
+        return samples;
+    }
 
 
 }
+
 
 
 fn computeFFT(data: Vec<f32>) -> Vec<f32>{
     let mut c64Values = fourier_transformation::data_to_c64(data);
     let mut transformedValues = fourier_transformation::transform(c64Values);
 
-    let mut scaledBinArray = vec![0 as f32; NUM_RECTS as usize];
+    let mut scaledBinArray = vec![0 as f32; (NUM_RECTS) as usize];
     let mut square1 = 0 as f32;
     let mut square2 = 0 as f32;
     let oneOverLogTen = 1.0/(10.0 as f32).ln();
-    for k in 0..NUM_RECTS as usize{
+    for k in 0..(NUM_RECTS) as usize{
 
-        square1 = (transformedValues[2 * k].re * transformedValues[2 * k].re) as f32;
-        square2 = (transformedValues[2 * k + 1].re * transformedValues[2 * k + 1].re) as f32;
-
+        square1 = (transformedValues[k].re * transformedValues[k].re) as f32;
+        square2 = (transformedValues[k].im * transformedValues[k].im) as f32;
 
         scaledBinArray[k] = 10.0 * (  (1.0 + (square1+square2)*(oneOverLogTen) ).ln() );
-        println!("value: {} || square1: {} || square2: {}", scaledBinArray[k], square1, square2);
+
     }
 
     return scaledBinArray;
-    //return fourier_transformation::data_to_f32(transformedValues);
 }
