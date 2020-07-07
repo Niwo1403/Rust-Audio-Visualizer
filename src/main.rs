@@ -41,13 +41,13 @@ fn main() {
         for i in values.iter(){
             //thread_Sender.send(1 as f32 - i as f32*1.0/512.0);
             thread_Sender.send(*i as f32);
-            sleep(Duration::from_millis(100));
+            sleep(Duration::from_millis(1));
         }
 
 
     });*/
 
-    //window::start_window(ValueReciver);
+    //window::start_window(ValueReciver);*/
 
     // FFT
     let data: Vec<f32> = vec![1.0, 2.0, 3.0, 4.0];
@@ -71,9 +71,14 @@ fn main() {
         println!("Bitte den Dateinamen der Audiodatei als Argument übergeben.");
         exit(1);
     }
-    // Read audio
-    audio_management::play_audio(&args[1], ValueSender);
 
+    let fileName = args[1].clone();
+    thread::spawn( || {
+        // Read audio
+        let fileName = fileName;
+        audio_management::play_audio(&fileName, ValueSender);
+
+    });
 
     // Start Window
     window::start_window(ValueReciver);

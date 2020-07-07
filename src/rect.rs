@@ -13,12 +13,14 @@ pub struct Rect{
     width: f32,
     height: f32,
     redraw: bool,
+    vertexBuffer: VertexBuffer<Vertex>,
 }
 
 pub trait drawable {
     fn update(&mut self);
-    fn get_vertex_buffer(&self, display: &Display) -> VertexBuffer<Vertex>;
-    fn new(x : f32, y : f32, width : f32, height : f32) -> Rect;
+    fn update_vertex_buffer(&mut self, display: &Display) -> &VertexBuffer<Vertex>;
+    fn get_vertex_buffer(&self) -> &VertexBuffer<Vertex>;
+    fn new(x : f32, y : f32, width : f32, height : f32, display: &Display) -> Rect;
     fn redraw(&mut self) -> bool;
     fn set_height(&mut self, height: f32);
 }
@@ -27,7 +29,7 @@ impl drawable for Rect{
     fn update(&mut self){
         self.redraw = true;
     }
-    fn get_vertex_buffer(&self, display: &Display) -> VertexBuffer<Vertex>{
+    fn update_vertex_buffer(&mut self, display: &Display) -> &VertexBuffer<Vertex>{
         let vertex1 = Vertex {position: [self.x, self.y]};
         let vertex2 = Vertex {position: [self.x, self.y+self.height]};
         let vertex3 = Vertex {position: [self.x+self.width, self.y+self.height]};
@@ -35,10 +37,25 @@ impl drawable for Rect{
 
         let shape = vec![vertex1, vertex2, vertex3, vertex4];
         let vertex_buffer = glium::VertexBuffer::new(display, &shape).unwrap();
-        return vertex_buffer;
+        self.vertexBuffer = vertex_buffer;
+        //println!("Updating VertexBuffer");
+
+        return &self.vertexBuffer;
     }
-    fn new(x : f32, y : f32, width : f32, height : f32) -> Rect{
-        return Rect {x, y, width, height, redraw: true };
+    fn get_vertex_buffer(&self) -> &VertexBuffer<Vertex>{
+        return &self.vertexBuffer;
+    }
+    fn new(x : f32, y : f32, width : f32, height : f32, display: &Display) -> Rect{
+        let vertex1 = Vertex {position: [x, y]};
+        let vertex2 = Vertex {position: [x, y+height]};
+        let vertex3 = Vertex {position: [x+width, y+height]};
+        let vertex4 = Vertex {position: [x+width, y]};
+
+        let shape = vec![vertex1, vertex2, vertex3, vertex4];
+        let vertex_buffer = glium::VertexBuffer::new(display, &shape).unwrap();
+
+
+        return Rect {x, y, width, height, redraw: true, vertexBuffer: vertex_buffer};
     }
     fn redraw(&mut self) -> bool{
         if self.redraw{
@@ -49,7 +66,10 @@ impl drawable for Rect{
         }
     }
     fn set_height(&mut self, height: f32){
-        self.height = height;
-        self.update();
+        if(self.height != height) {
+            self.height = height;
+            self.update();
+        }
+
     }
 }

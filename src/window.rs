@@ -13,12 +13,12 @@ pub struct window_struct{
 }
 
 impl window_struct{
-    pub fn open_window(ValueReceiver: Receiver<f32>) -> window_struct{
+    /*pub fn open_window(ValueReceiver: Receiver<f32>) -> window_struct{
 
         let mut drawMethode = freq_bars::init_frequency_bars(ValueReceiver);
         let window = window_struct {draw_methode: drawMethode};
         return window;
-    }
+    }*/
 
     /*pub fn start_window(&mut self){
         let mut event_loop = glutin::event_loop::EventLoop::new();
@@ -63,7 +63,7 @@ pub fn start_window(ValueReceiver: Receiver<f32>){
     target.clear_color(1.0, 1.0, 1.0, 1.0);
     target.finish().unwrap();
 
-    let mut drawMethode = freq_bars::init_frequency_bars(ValueReceiver);
+    let mut drawMethode = freq_bars::init_frequency_bars(ValueReceiver, &display);
     //loop
     event_loop.run(move |ev, _, control_flow| {
         /*let next_frame_time = std::time::Instant::now() +

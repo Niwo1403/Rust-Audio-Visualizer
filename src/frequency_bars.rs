@@ -1,5 +1,5 @@
 
-use glium::{glutin, Surface, Frame, Display, VertexBuffer};
+use glium::{glutin, Surface, Frame, Display, VertexBuffer, Program, index::NoIndices};
 use std::time::{SystemTime, UNIX_EPOCH};
 use std::f32::consts::PI;
 use std::collections::{LinkedList, VecDeque};
@@ -24,17 +24,43 @@ pub struct freq_bars{
     valueList: VecDeque<f32>,
     rec: Receiver<f32>,
     windowCoefficients: Vec<f32>,
+    program: Program,
+    indices: NoIndices,
 }
 
 impl freq_bars{
-    pub fn init_frequency_bars(ValueReceiver: Receiver<f32>) -> freq_bars{
+    pub fn init_frequency_bars(ValueReceiver: Receiver<f32>, display: &Display) -> freq_bars{
+
+        //init fftMaths
         let fftWindowLength = (NUM_RECTS*2) as usize;
         let mut windowCoefficients = vec![0 as f32; fftWindowLength];
         for i in 0..fftWindowLength {
             windowCoefficients[i] = 0.54 - 0.46*(2.0*PI*i as f32/fftWindowLength as f32).cos();
         }
 
-        let mut freq_bars = freq_bars{ list_rects: vec![], valueList: VecDeque::with_capacity((NUM_RECTS*2) as usize), rec: ValueReceiver, windowCoefficients: windowCoefficients};
+        //init drawing
+        let indices = glium::index::NoIndices(glium::index::PrimitiveType::LineLoop);
+
+        let vertex_shader_src = r#"
+        #version 140
+        in vec2 position;
+        void main() {
+            gl_Position = vec4(position, 0.0, 1.0);
+        }
+        "#;
+
+        let fragment_shader_src = "
+        #version 140
+        out vec4 color;
+        void main() {
+            color = vec4(1.0, 0.0, 0.0, 1.0);
+        }
+        ";
+
+        let program = glium::Program::from_source(display, vertex_shader_src, fragment_shader_src, None).unwrap();
+
+
+        let mut freq_bars = freq_bars{ list_rects: vec![], valueList: VecDeque::with_capacity((NUM_RECTS*2) as usize), rec: ValueReceiver, windowCoefficients: windowCoefficients, program: program, indices: indices};
         for i in 0..NUM_RECTS{
             let width = 2.0;
             let offset = 1.0;
@@ -44,7 +70,7 @@ impl freq_bars{
             let width = (width/NUM_RECTS as f32)-0.01;
             let height = -0.2;
 
-            let rect = Rect::new(x, y, width, height);
+            let rect = Rect::new(x, y, width, height, display);
 
             freq_bars.list_rects.push(rect);
 
@@ -74,7 +100,6 @@ impl freq_bars{
         let mut recResult = self.rec.try_recv();
         while(recResult.is_ok()){
             let newVal = recResult.unwrap();
-            println!("Rec new val: {}", newVal);
             self.valueList.push_back(newVal);
             while(self.valueList.len() > (NUM_RECTS*2) as usize){
                 self.valueList.pop_front();
@@ -117,25 +142,6 @@ impl freq_bars{
         }*/
 
 
-        let indices = glium::index::NoIndices(glium::index::PrimitiveType::LineLoop);
-
-        let vertex_shader_src = r#"
-        #version 140
-        in vec2 position;
-        void main() {
-            gl_Position = vec4(position, 0.0, 1.0);
-        }
-        "#;
-
-        let fragment_shader_src = "
-        #version 140
-        out vec4 color;
-        void main() {
-            color = vec4(1.0, 0.0, 0.0, 1.0);
-        }
-        ";
-
-        let program = glium::Program::from_source(display, vertex_shader_src, fragment_shader_src, None).unwrap();
 
         target.clear_color(1.0, 1.0, 1.0, 1.0);
 
@@ -144,8 +150,13 @@ impl freq_bars{
         for rect in self.list_rects.iter_mut() {
             //if (rect.redraw()) {
                 //println!("redrawing: {}", i);
-                let vertex_buffer = rect.get_vertex_buffer(display);
-                target.draw(&vertex_buffer, &indices, &program, &glium::uniforms::EmptyUniforms, &Default::default()).unwrap();
+                //let vertex_buffer = rect.get_vertex_buffer(display);
+                if(rect.redraw()){
+                    rect.update_vertex_buffer(display);
+
+                }
+            target.draw(rect.get_vertex_buffer(), &self.indices, &self.program, &glium::uniforms::EmptyUniforms, &Default::default()).unwrap();
+
             //}
             i += 1;
         }
