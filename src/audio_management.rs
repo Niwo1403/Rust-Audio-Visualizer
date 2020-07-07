@@ -58,18 +58,5 @@ pub fn play_audio(arg: &str, value_sender: Sender<f32>) {
 
 
     sink.append(wrapped_source);
+    sink.sleep_until_end();
 }
-
-/*
-pub fn read_file(arg: &str) -> Vec<i8> {
-    let mut f = File::open(arg)?;
-    let mut buffer: Vec<u8> = Vec::new();
-    // Read all bytes until EOF in this source, placing them into buf.
-    // All bytes read from this source will be appended to the specified buffer buf.This function will continuously call read() to append more data to buf until read() returns either Ok(0) or an error of non-ErrorKind::Interrupted kind.
-    // If successful, this function will return the total number of bytes read.
-    let mut read_into: Vec<i8> = vec![0; 128];
-    f.read_i8_into(&mut read_into).unwrap(); // read_to_end(&mut buffer)?;
-    return read_into;
-}
-*/
-
