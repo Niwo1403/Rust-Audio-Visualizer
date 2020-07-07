@@ -23,25 +23,19 @@ pub fn play_audio(arg: &str) {
     struct WrappedSource <T> {
         source_box: std::boxed::Box<T>, //  rodio::source::SamplesConverter<rodio::Decoder<BufReader<File>>, dyn Sample>>,
     };
-    trait to_f {
-      fn to_f32(self) -> f32;
-    };
-    impl <T> Iterator for WrappedSource <T> where T: Iterator, T::Item: to_f{
+    impl <T> Iterator for WrappedSource <T> where T: Iterator<Item=f32> {
         type Item = f32;
 
         fn next(&mut self) -> Option<f32> {
             let elm = (*self.source_box).next();
             if let Some(elm) = elm {
-                // get f32 and pass to transformation
-                let val = elm.to_f32();
-                // visualtize(val);
-                return Some(val);
-            } else {
-                return None;
+                // pass f32 to transformation
+                // visualtize(elm);
             }
+            return elm;
         }
     };
-    impl <S> Source for WrappedSource <S> where S: Iterator, S::Item: to_f {
+    impl <S> Source for WrappedSource <S> where S: Iterator<Item=f32> {
         fn current_frame_len(&self) -> Option<usize> {
             return self.current_frame_len();
         }
