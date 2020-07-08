@@ -18,7 +18,7 @@ implement_vertex!(Vertex, position);
 
 static GAIN : f32 = 2.4;
 static SLOPE : f32 = 0.01;
-static NUM_RECTS : i64 = 256;
+static NUM_RECTS : i64 = 64;
 
 pub struct freq_bars{
     list_rects: Vec<Rect>,
@@ -67,10 +67,10 @@ impl freq_bars{
 
             let x = (0.0-offset)+i as f32*(width/NUM_RECTS as f32)+0.005;
             let y = 0.0;
-            let width = (width/NUM_RECTS as f32)-0.01;
+            let width = (width/NUM_RECTS as f32)-0.02;
             let height = -0.2;
 
-            let rect = Rect::new(x, y, width, height, display);
+            let rect = Rect::new(x, y, width, height);
 
             freq_bars.list_rects.push(rect);
 
@@ -145,19 +145,23 @@ impl freq_bars{
 
 
         target.clear_color(1.0, 1.0, 1.0, 1.0);
+        let mut shapes = vec![];
 
 
         let mut i = 0;
         for rect in self.list_rects.iter_mut() {
-            if(rect.redraw()){
+            /*if(rect.redraw()){
                 rect.update_vertex_buffer(display);
 
-            }
-            target.draw(rect.get_vertex_buffer(), &self.indices, &self.program, &glium::uniforms::EmptyUniforms, &Default::default()).unwrap();
+            }*/
+            let mut rect_shape = rect.shape.clone();
+            shapes.append(&mut rect_shape);
 
             i += 1;
         }
 
+        let vertex_buffer = glium::VertexBuffer::new(display, &shapes).unwrap();
+        target.draw(&vertex_buffer, &self.indices, &self.program, &glium::uniforms::EmptyUniforms, &Default::default()).unwrap();
         target.finish().unwrap();
 
 

@@ -77,7 +77,6 @@ pub fn start_window(ValueReceiver: Receiver<f32>){
         let mut target = display.draw();
         //draw::draw(target, &display, &start_time, &mut drawMethode);
         drawMethode.draw_visualizer(target, &display);
-
         //---------------end drawing------------------------------
         *control_flow = glutin::event_loop::ControlFlow::WaitUntil(next_frame_time);
         match ev {
