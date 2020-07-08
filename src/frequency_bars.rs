@@ -6,19 +6,14 @@ use std::collections::{LinkedList, VecDeque};
 use super::rect::{Rect, drawable};
 use crate::fourier_transformation;
 use crate::fourier_transformation::FFT_LENGTH;
+use crate::rect::Vertex;
 use std::sync::mpsc::Receiver;
 use dft::c64;
 
-#[derive(Copy, Clone)]
-struct Vertex {
-    position: [f32; 2],
-}
-
-implement_vertex!(Vertex, position);
 
 static GAIN : f32 = 2.4;
 static SLOPE : f32 = 0.01;
-static NUM_RECTS : i64 = 64;
+static NUM_RECTS : i64 = 256;
 
 pub struct freq_bars{
     list_rects: Vec<Rect>,
@@ -39,7 +34,8 @@ impl freq_bars{
         }
 
         //init drawing
-        let indices = glium::index::NoIndices(glium::index::PrimitiveType::LineLoop);
+        //let indices = glium::index::NoIndices(glium::index::PrimitiveType::LinesList);
+        let indices = glium::index::NoIndices(glium::index::PrimitiveType::LinesList);
 
         let vertex_shader_src = r#"
         #version 140
@@ -67,7 +63,7 @@ impl freq_bars{
 
             let x = (0.0-offset)+i as f32*(width/NUM_RECTS as f32)+0.005;
             let y = 0.0;
-            let width = (width/NUM_RECTS as f32)-0.02;
+            let width = (width/NUM_RECTS as f32)-0.01;
             let height = -0.2;
 
             let rect = Rect::new(x, y, width, height);
@@ -119,7 +115,7 @@ impl freq_bars{
         }
         let mut i = 0;
         for value in fourierOutput.iter_mut(){
-            let y = (( (GAIN + SLOPE*i as f32)*(*value)) / 500.0 as f32);
+            let y = (( (GAIN + SLOPE*i as f32)*(*value)) / 400.0 as f32);
             //println!("Y: {}", y);
             self.list_rects[i].set_height(y);
 
@@ -145,8 +141,11 @@ impl freq_bars{
 
 
         target.clear_color(1.0, 1.0, 1.0, 1.0);
-        let mut shapes = vec![];
 
+
+        let mut shapes = vec![];
+        //uncomment for line-drawMethode
+        //shapes.push(Vertex {position: [-1 as f32, 0 as f32]});
 
         let mut i = 0;
         for rect in self.list_rects.iter_mut() {

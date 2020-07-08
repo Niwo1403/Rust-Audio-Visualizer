@@ -2,7 +2,7 @@ use glium::{glutin, Surface, Frame, Display, VertexBuffer};
 
 #[derive(Copy, Clone)]
 pub struct Vertex {
-    position: [f32; 2],
+    pub position: [f32; 2],
 }
 
 implement_vertex!(Vertex, position);
@@ -37,8 +37,11 @@ impl drawable for Rect{
         let vertex3 = Vertex {position: [self.x+self.width, self.y+self.height]};
         let vertex4 = Vertex {position: [self.x+self.width, self.y]};
 
-        let shape = vec![vertex1, vertex2, vertex3, vertex4];
-        //let vertex_buffer = glium::VertexBuffer::new(display, &shape).unwrap();
+        let shape = vec![vertex1, vertex2, vertex2, vertex3, vertex3, vertex4, vertex4, vertex1];
+
+        //uncomment for line-drawMethode
+        /*let vertexMid = Vertex {position: [self.x+self.width/2.0, self.y+self.height]};
+        let shape = vec![vertexMid, vertexMid];*/
         self.shape = shape;
     }
     fn new(x : f32, y : f32, width : f32, height : f32) -> Rect{
