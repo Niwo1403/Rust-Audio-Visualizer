@@ -5,6 +5,7 @@ use std::f32::consts::PI;
 use std::collections::{LinkedList, VecDeque};
 use super::rect::{Rect, drawable};
 use crate::fourier_transformation;
+use crate::fourier_transformation::FFT_LENGTH;
 use std::sync::mpsc::Receiver;
 use dft::c64;
 
@@ -32,10 +33,9 @@ impl freq_bars{
     pub fn init_frequency_bars(ValueReceiver: Receiver<f32>, display: &Display) -> freq_bars{
 
         //init fftMaths
-        let fftWindowLength = (NUM_RECTS*2) as usize;
-        let mut windowCoefficients = vec![0 as f32; fftWindowLength];
-        for i in 0..fftWindowLength {
-            windowCoefficients[i] = 0.54 - 0.46*(2.0*PI*i as f32/fftWindowLength as f32).cos();
+        let mut windowCoefficients = vec![0 as f32; FFT_LENGTH];
+        for i in 0..FFT_LENGTH {
+            windowCoefficients[i] = 0.54 - 0.46*(2.0*PI*i as f32/FFT_LENGTH as f32).cos();
         }
 
         //init drawing
@@ -60,7 +60,7 @@ impl freq_bars{
         let program = glium::Program::from_source(display, vertex_shader_src, fragment_shader_src, None).unwrap();
 
 
-        let mut freq_bars = freq_bars{ list_rects: vec![], valueList: VecDeque::with_capacity((NUM_RECTS*2) as usize), rec: ValueReceiver, windowCoefficients: windowCoefficients, program: program, indices: indices};
+        let mut freq_bars = freq_bars{ list_rects: vec![], valueList: VecDeque::with_capacity(FFT_LENGTH), rec: ValueReceiver, windowCoefficients: windowCoefficients, program: program, indices: indices};
         for i in 0..NUM_RECTS{
             let width = 2.0;
             let offset = 1.0;
@@ -76,7 +76,7 @@ impl freq_bars{
 
         }
 
-        for i in 0..(NUM_RECTS*2) {
+        for i in 0..FFT_LENGTH {
             freq_bars.valueList.push_front(0 as f32);
         }
 
@@ -101,7 +101,7 @@ impl freq_bars{
         while(recResult.is_ok()){
             let newVal = recResult.unwrap();
             self.valueList.push_back(newVal);
-            while(self.valueList.len() > (NUM_RECTS*2) as usize){
+            while(self.valueList.len() > FFT_LENGTH){
                 self.valueList.pop_front();
             }
             recResult = self.rec.try_recv();
@@ -111,11 +111,12 @@ impl freq_bars{
         let mut valueSlices = self.valueList.as_slices();
         let mut fourierInput = valueSlices.0.to_vec();
         fourierInput.append(&mut valueSlices.1.to_vec());
-        fourierInput = self.applyWindow((NUM_RECTS * 2) as usize, fourierInput);
+        fourierInput = self.applyWindow(FFT_LENGTH, fourierInput);
 
         let mut fourierOutput = computeFFT(fourierInput);
-
-
+        if(NUM_RECTS < (FFT_LENGTH/2) as i64){
+            fourierOutput = scaleArrayDown(fourierOutput, NUM_RECTS as usize);
+        }
         let mut i = 0;
         for value in fourierOutput.iter_mut(){
             let y = (( (GAIN + SLOPE*i as f32)*(*value)) / 500.0 as f32);
@@ -181,17 +182,36 @@ impl freq_bars{
 
 }
 
+fn scaleArrayDown(data: Vec<f32>, new_length: usize) -> Vec<f32>{
+    let mut new_vec = vec![0 as f32; new_length];
+    let mut temp = 0 as f32;
+    for i in 0..new_length{
+        /*let windowWidth = (data.len() as f32 / new_length as f32);
+        let startAvgWindow = (i as f32*windowWidth - windowWidth/2.0);
+        let endAvgWindow = startAvgWindow+windowWidth;
+        let mut nums = 0.0;
+        for j in startAvgWindow as usize..endAvgWindow as usize{
+            temp += data[j];
+            nums += 1.0;
+        }*/
+
+        temp = data[i * (data.len() as f32 / new_length as f32).round() as usize];
+        new_vec[i] = temp;
+    }
+
+    return new_vec;
+}
 
 
 fn computeFFT(data: Vec<f32>) -> Vec<f32>{
     let mut c64Values = fourier_transformation::data_to_c64(data);
     let mut transformedValues = fourier_transformation::transform(c64Values);
 
-    let mut scaledBinArray = vec![0 as f32; (NUM_RECTS) as usize];
+    let mut scaledBinArray = vec![0 as f32; FFT_LENGTH/2 as usize];
     let mut square1 = 0 as f32;
     let mut square2 = 0 as f32;
     let oneOverLogTen = 1.0/(10.0 as f32).ln();
-    for k in 0..(NUM_RECTS) as usize{
+    for k in 0..(FFT_LENGTH/2) as usize{
 
         square1 = (transformedValues[k].re * transformedValues[k].re) as f32;
         square2 = (transformedValues[k].im * transformedValues[k].im) as f32;

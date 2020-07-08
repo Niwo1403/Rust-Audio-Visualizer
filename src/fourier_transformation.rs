@@ -1,7 +1,9 @@
 use dft::{Operation, Plan, c64};
 
+pub static FFT_LENGTH : usize = 512;
+
 pub fn transform(mut data: Vec<c64>) -> Vec<c64> {
-    let plan = Plan::new(Operation::Forward, 512);
+    let plan = Plan::new(Operation::Forward, FFT_LENGTH);
     dft::transform(&mut data, &plan);
     return data;
 }
