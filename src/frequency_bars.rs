@@ -149,16 +149,12 @@ impl freq_bars{
 
         let mut i = 0;
         for rect in self.list_rects.iter_mut() {
-            //if (rect.redraw()) {
-                //println!("redrawing: {}", i);
-                //let vertex_buffer = rect.get_vertex_buffer(display);
-                if(rect.redraw()){
-                    rect.update_vertex_buffer(display);
+            if(rect.redraw()){
+                rect.update_vertex_buffer(display);
 
-                }
+            }
             target.draw(rect.get_vertex_buffer(), &self.indices, &self.program, &glium::uniforms::EmptyUniforms, &Default::default()).unwrap();
 
-            //}
             i += 1;
         }
 

@@ -8,10 +8,11 @@ pub struct Vertex {
 implement_vertex!(Vertex, position);
 
 pub struct Rect{
-    x: f32,
-    y: f32,
-    width: f32,
-    height: f32,
+    pub x: f32,
+    pub y: f32,
+    pub width: f32,
+    pub height: f32,
+    old_height: f32,
     redraw: bool,
     vertexBuffer: VertexBuffer<Vertex>,
 }
@@ -23,6 +24,7 @@ pub trait drawable {
     fn new(x : f32, y : f32, width : f32, height : f32, display: &Display) -> Rect;
     fn redraw(&mut self) -> bool;
     fn set_height(&mut self, height: f32);
+    fn get_old_height(&self) -> f32;
 }
 
 impl drawable for Rect{
@@ -55,7 +57,7 @@ impl drawable for Rect{
         let vertex_buffer = glium::VertexBuffer::new(display, &shape).unwrap();
 
 
-        return Rect {x, y, width, height, redraw: true, vertexBuffer: vertex_buffer};
+        return Rect {x, y, width, height, old_height: 0.0, redraw: true, vertexBuffer: vertex_buffer};
     }
     fn redraw(&mut self) -> bool{
         if self.redraw{
@@ -67,9 +69,13 @@ impl drawable for Rect{
     }
     fn set_height(&mut self, height: f32){
         if(self.height != height) {
+            self.old_height = self.height;
             self.height = height;
             self.update();
         }
 
+    }
+    fn get_old_height(&self) -> f32{
+        return self.old_height;
     }
 }
