@@ -62,7 +62,7 @@ impl freq_bars{
             let offset = 1.0;
 
             let x = (0.0-offset)+i as f32*(width/NUM_RECTS as f32)+0.005;
-            let y = 0.0;
+            let y = -0.95;
             let width = (width/NUM_RECTS as f32)-0.01;
             let height = -0.2;
 
@@ -192,8 +192,8 @@ fn scaleArrayDown(data: Vec<f32>, new_length: usize) -> Vec<f32>{
         for j in startAvgWindow as usize..endAvgWindow as usize{
             temp += data[j];
             nums += 1.0;
-        }*/
-
+        }
+        temp = temp/nums;*/
         temp = data[i * (data.len() as f32 / new_length as f32).round() as usize];
         new_vec[i] = temp;
     }
