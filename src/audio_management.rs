@@ -23,16 +23,24 @@ pub fn play_audio(arg: &str, value_sender: Sender<f32>) {
 
     struct WrappedSource <T> {
         source_box: std::boxed::Box<T>, //  rodio::source::SamplesConverter<rodio::Decoder<BufReader<File>>, dyn Sample>>,
-        value_sender: Sender<f32>
+        value_sender: Sender<f32>,
+        channelCount: u16,
     };
-    impl <T> Iterator for WrappedSource <T> where T: Iterator<Item=f32> {
+    impl <T> Iterator for WrappedSource <T> where T: Iterator<Item=f32>, T: Source {
         type Item = f32;
 
         fn next(&mut self) -> Option<f32> {
             let elm = (*self.source_box).next();
             if let Some(elm) = elm {
-                // pass f32 to transformation
-                self.value_sender.send(elm);
+
+                if self.channelCount == 0 {
+                    // pass f32 to transformation
+                    self.value_sender.send(elm);
+                }
+                self.channelCount += 1;
+                if self.channelCount >= (*self.source_box).channels(){
+                    self.channelCount = 0;
+                }
             }
             return elm;
         }
@@ -54,7 +62,7 @@ pub fn play_audio(arg: &str, value_sender: Sender<f32>) {
             return (*self.source_box).total_duration();
         }
     };
-    let wrapped_source:WrappedSource<rodio::source::SamplesConverter<Decoder<BufReader<File>>, f32>> = WrappedSource { source_box: Box::new(source.convert_samples()), value_sender: value_sender};
+    let wrapped_source:WrappedSource<rodio::source::SamplesConverter<Decoder<BufReader<File>>, f32>> = WrappedSource { source_box: Box::new(source.convert_samples()), value_sender: value_sender, channelCount: 0};
 
 
     sink.append(wrapped_source);
