@@ -1,5 +1,3 @@
-use glium::{glutin, Surface, Frame, Display, VertexBuffer};
-
 #[derive(Copy, Clone)]
 pub struct Vertex {
     pub position: [f32; 2],
@@ -17,7 +15,7 @@ pub struct Rect{
     pub shape: Vec<Vertex>,
 }
 
-pub trait drawable {
+pub trait Drawable {
     fn update(&mut self);
     fn update_shape(&mut self);
     fn new(x : f32, y : f32, width : f32, height : f32) -> Rect;
@@ -26,7 +24,7 @@ pub trait drawable {
     fn get_old_height(&self) -> f32;
 }
 
-impl drawable for Rect{
+impl Drawable for Rect{
     fn update(&mut self){
         self.update_shape();
         self.redraw = true;
@@ -40,8 +38,6 @@ impl drawable for Rect{
         let shape = vec![vertex1, vertex2, vertex2, vertex3, vertex3, vertex4, vertex4, vertex1];
 
         //uncomment for line-drawMethode
-        /*let vertexMid = Vertex {position: [self.x+self.width/2.0, self.y+self.height]};
-        let shape = vec![vertexMid, vertexMid];*/
         self.shape = shape;
     }
     fn new(x : f32, y : f32, width : f32, height : f32) -> Rect{
@@ -51,8 +47,6 @@ impl drawable for Rect{
         let vertex4 = Vertex {position: [x+width, y]};
 
         let shape = vec![vertex1, vertex2, vertex3, vertex4];
-        //let vertex_buffer = glium::VertexBuffer::new(display, &shape).unwrap();
-
 
         return Rect {x, y, width, height, old_height: 0.0, redraw: true, shape: shape};
     }
@@ -65,7 +59,7 @@ impl drawable for Rect{
         }
     }
     fn set_height(&mut self, height: f32){
-        if(self.height != height) {
+        if self.height != height {
             self.old_height = self.height;
             self.height = height;
             self.update();
