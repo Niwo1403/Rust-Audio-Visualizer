@@ -7,27 +7,23 @@ use std::process::exit;
 mod window;
 mod fourier_transformation;
 mod audio_management;
+mod visualizer;
 mod frequency_bars;
+mod oscilloscope;
+mod waveform;
+mod drawable;
 mod rect;
+mod line;
 
-//TODO Fileselector
-//TODO Malen
-//TODO Audiodatein lesen
-//TODO FFT-Bibliotheken benutzen
 
 use std::sync::mpsc;
 use std::sync::mpsc::{Sender, Receiver};
 use std::thread;
 
 fn main() {
-    let (value_sender, value_receiver): (Sender<f32>, Receiver<f32>) = mpsc::channel();
 
-    // FFT
-    let data: Vec<f32> = vec![1.0, 2.0, 3.0, 4.0];
-    let mut data = fourier_transformation::data_to_c64(data);
-    println!("{:?}\n\n", data);
-    data = fourier_transformation::transform(data);
-    println!("{:?}", data);
+    //channel erstellen um Daten vom Player zum Visualizer zu bekommen
+    let (value_sender, value_receiver): (Sender<f32>, Receiver<f32>) = mpsc::channel();
 
     // Argumente
     use std::env;
@@ -53,6 +49,13 @@ fn main() {
         // TODO: Close window here, or close window if value_receiver doesn't receive data anymore
     });
 
+    //art der Visualisierung aus Argumenten lesen
+    let mut visualizer_type = 1;
+    if args.len() > 2 {
+        visualizer_type = args[2].clone().parse::<i32>().unwrap();
+        if visualizer_type != 1 && visualizer_type != 2 && visualizer_type != 3 {visualizer_type = 1;}
+    }
+
     // Start Window
-    window::start_window(value_receiver);
+    window::start_window(value_receiver, visualizer_type);
 }
