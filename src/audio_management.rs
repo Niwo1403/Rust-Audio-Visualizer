@@ -10,17 +10,20 @@ use std::sync::mpsc::Sender;
 
 pub fn play_audio(arg: &str, value_sender: Sender<f32>) {
     println!("Filename: {:?}", arg);
+    // get audio file to play and get rodio components to start paling
     let device = rodio::default_output_device().unwrap();
     let sink = Sink::new(&device);
 
-    let file = File::open(arg).unwrap();  //added
+    let file = File::open(arg).unwrap();
     let source = Decoder::new(BufReader::new(file)).unwrap();
 
+    // custom struct for handling the audio file
     struct WrappedSource <T> {
         source_box: std::boxed::Box<T>,
         value_sender: Sender<f32>,
         channel_count: u16,
     };
+    // custom Iterator, so every value played can be send to the fft
     impl <T> Iterator for WrappedSource <T> where T: Iterator<Item=f32>, T: Source {
         type Item = f32;
 
@@ -59,7 +62,8 @@ pub fn play_audio(arg: &str, value_sender: Sender<f32>) {
     };
     let wrapped_source:WrappedSource<rodio::source::SamplesConverter<Decoder<BufReader<File>>, f32>> = WrappedSource { source_box: Box::new(source.convert_samples()), value_sender: value_sender, channel_count: 0};
 
-
+    // play sound; sink implicitly calls the iterator which adds the values to a queue for the fft
     sink.append(wrapped_source);
+    // wait until music playing is done; playing stops as soon as the method returns
     sink.sleep_until_end();
 }
